@@ -12,18 +12,17 @@
 extern SoftwareSerial lcdSerial;
 extern Keyboard pdkeys;
 
-// todo export these
-char lcd_clear_str[] = "\xfe\x01";
-char lcd_blink_cursor_str[] = "\xfe\x0d";
+const char lcd_clear_str[] = "\xfe\x01";
+const char lcd_blink_cursor_str[] = "\xfe\x0d";
 
 void
 lcd_gotoline(uint8_t ln)
 {
-	static char line_positions[] = { '\x80', '\xc0', '\x94', '\xd4' };
+	const char lcd_line_positions[] = { '\x80', '\xc0', '\x94', '\xd4' };
 	if(ln > 3)
 		ln = 3;
  	lcdSerial.print("\xfe");
-	lcdSerial.print(line_positions[ln]);
+	lcdSerial.print(lcd_line_positions[ln]);
 }
 
 /*
@@ -59,7 +58,7 @@ LcdMenu::run(LcdMenu_entry *menu, int n_entries)
 		k = pdkeys.poll();
 		switch(k) {
  		case K_RIGHT:
- 			return menu[cur_item].code;
+ 			return cur_item;
  			break;
 		case K_UP:
 			if(cur_item > 0)

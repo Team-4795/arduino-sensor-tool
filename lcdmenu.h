@@ -3,7 +3,7 @@
  * and 
  */
 
-typedef int PFV;
+typedef void (*PFV)();
 
 struct LcdMenu_entry {
   int code;
@@ -22,3 +22,8 @@ class LcdMenu {
  public:
    int run(LcdMenu_entry *menu, int n_entries);
 };
+
+extern const char lcd_clear_str[];
+extern const char lcd_blink_cursor_str[];
+extern void lcd_gotoline(uint8_t ln);
+

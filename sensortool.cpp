@@ -10,9 +10,12 @@ SoftwareSerial lcdSerial(3, 2);  // rxpin, txpin
 Keyboard pdkeys;
 LcdMenu lcdmenu;
 
+extern void adread_init();
+extern void adread_loop();
+
 struct LcdMenu_entry sensor_menu[] = {
 	{1, "1PWM Generator", 0, 0, 0},
-	{2, "2A-to-D reader", 0, 0, 0},
+	{2, "2A-to-D reader", adread_init, adread_loop, 0},
 	{3, "3i2c scan", 0, 0, 0},
 	{4, "4RevColor3 ADPS9151", 0, 0, 0},
 
@@ -69,15 +72,24 @@ void loop() {
 	Serial.print(menu_choice);
 	Serial.write('\n');
 	Serial.write('\r');
-	delay(100);
-	
-	if(blink)
-		digitalWrite(13, HIGH);   // set the LED on
-	else
-		digitalWrite(13, LOW);    // set the LED off
-	delay(30);              // wait (ms)
 
-	blink = ~blink;
+	lcdSerial.print("\xfe\x01"); // clear screen
+	delay(100);
+	if(sensor_menu[menu_choice].init)
+		sensor_menu[menu_choice].init();
+
+	if(sensor_menu[menu_choice].loop) {
+		while(1) {
+			sensor_menu[menu_choice].loop();
+			
+			if(blink)
+				digitalWrite(13, HIGH);   // set the LED on
+			else
+				digitalWrite(13, LOW);    // set the LED off)
+			delay(100);
+			blink = ~blink;
+		}
+	}
 }
 
 int main(void)
