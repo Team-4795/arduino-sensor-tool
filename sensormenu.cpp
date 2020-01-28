@@ -11,15 +11,17 @@ Keyboard pdkeys;
 LcdMenu lcdmenu;
 
 struct LcdMenu_entry sensor_menu[] = {
-	{1, "PWM Generator", 0, 0, 0},
-	{2, "A-to-D reader", 0, 0, 0},
-	{3, "i2c scan", 0, 0, 0},
-	{4, "RevColor V3 ADPS9151", 0, 0, 0},
-	{5, "RevColor V2 TMD37821", 0, 0, 0},
-	{6, "VL53L0X distance", 0, 0, 0},
-	{7, "VCNL4010 distance", 0, 0, 0},
-	{8, "keypad test", 0, 0, 0},
-	{9, "PWM input decoder", 0, 0, 0},
+	{1, "1PWM Generator", 0, 0, 0},
+	{2, "2A-to-D reader", 0, 0, 0},
+	{3, "3i2c scan", 0, 0, 0},
+	{4, "4RevColor3 ADPS9151", 0, 0, 0},
+
+	{5, "5RevColor2 TMD37821", 0, 0, 0},
+	{6, "6VL53L0X distance", 0, 0, 0},
+	{7, "7VCNL4010 distance", 0, 0, 0},
+	{8, "8keypad test", 0, 0, 0},
+
+	{9, "9PWM input decoder", 0, 0, 0},
 };
 const int sensor_menu_N = (sizeof(sensor_menu)/sizeof(LcdMenu_entry));
 
@@ -35,8 +37,8 @@ void setup() {
 //	pinMode(3, OUTPUT);     // we use this hardware pwm output 
 //	pinMode(10, INPUT);     // PB2 button on proto board can be plugged in here
 
-	// pin 15 PB1/OC1A - arduino 9 - variable pwm out
-	// pin 16 PB2/OC1B - arduino 10 - fixed (for now) pwm out
+	// pin 15 PB1/OC1A - arduino 9 -  pwm out 1
+	// pin 16 PB2/OC1B - arduino 10 - pwm out 2
   
 	Serial.begin(19200); 
 	Serial.print(signon_msg);
@@ -52,7 +54,7 @@ void setup() {
 	Serial.write('\r');
 	blink = 0;
 
-	delay(300);              // wait (ms)
+	delay(400);              // wait (ms)
 }
 
 
@@ -67,7 +69,8 @@ void loop() {
 	Serial.print(menu_choice);
 	Serial.write('\n');
 	Serial.write('\r');
-
+	delay(100);
+	
 	if(blink)
 		digitalWrite(13, HIGH);   // set the LED on
 	else
