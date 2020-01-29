@@ -26,4 +26,5 @@ class LcdMenu {
 extern const char lcd_clear_str[];
 extern const char lcd_blink_cursor_str[];
 extern void lcd_gotoline(uint8_t ln);
+extern void lcd_goto(uint8_t ln, uint8_t pos);
 

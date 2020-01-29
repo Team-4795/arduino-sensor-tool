@@ -15,14 +15,27 @@ extern Keyboard pdkeys;
 const char lcd_clear_str[] = "\xfe\x01";
 const char lcd_blink_cursor_str[] = "\xfe\x0d";
 
+static const char lcd_line_positions[] = { '\x80', '\xc0', '\x94', '\xd4' };
+
 void
 lcd_gotoline(uint8_t ln)
 {
-	const char lcd_line_positions[] = { '\x80', '\xc0', '\x94', '\xd4' };
 	if(ln > 3)
 		ln = 3;
  	lcdSerial.print("\xfe");
 	lcdSerial.print(lcd_line_positions[ln]);
+}
+
+void
+lcd_goto(uint8_t ln, uint8_t pos)
+{
+	if(ln > 3)
+		ln = 3;
+	if(pos > 19)
+		pos = 19; 
+	char c = lcd_line_positions[ln] + pos;
+ 	lcdSerial.print("\xfe");
+	lcdSerial.print(c);
 }
 
 /*

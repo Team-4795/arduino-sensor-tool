@@ -66,7 +66,6 @@ void loop() {
 	int menu_choice;
 
  	menu_choice = lcdmenu.run(sensor_menu, sensor_menu_N);
-	lcdSerial.print("\xfe\x01"); // clear screen
 
 	Serial.print("menu_choice ");
 	Serial.print(menu_choice);
@@ -74,11 +73,14 @@ void loop() {
 	Serial.write('\r');
 
 	lcdSerial.print("\xfe\x01"); // clear screen
+        lcdSerial.print("\x7c\x8c"); // backlight 40%
 	delay(100);
+
 	if(sensor_menu[menu_choice].init)
 		sensor_menu[menu_choice].init();
 
 	if(sensor_menu[menu_choice].loop) {
+		// TODO can we ever break out of this? how?
 		while(1) {
 			sensor_menu[menu_choice].loop();
 			
@@ -86,7 +88,7 @@ void loop() {
 				digitalWrite(13, HIGH);   // set the LED on
 			else
 				digitalWrite(13, LOW);    // set the LED off)
-			delay(100);
+			delay(30);
 			blink = ~blink;
 		}
 	}
