@@ -20,15 +20,12 @@ uint16_t red=0;
 uint16_t green=0;
 uint16_t blue=0;
 
-uint8_t i2cWrite(uint8_t reg, uint8_t val);
-uint8_t i2cRead(uint8_t reg, uint8_t *val, uint16_t len);
-
 void adps9151_setup() {
 	uint8_t status;
 	Wire.begin();
 
-	status = i2cWrite(0x00,0b0110);  //enable light sensor and activate rgb mode
-	status |= i2cWrite(0x04,0b01000000); //set to 16 bit resolution for 25ms response time and set measurement rate to 25ms
+	status = st_i2c_write_byte(I2C_ADDR, 0x00, 0b0110);  //enable light sensor and activate rgb mode
+	status |= st_i2c_write_byte(I2C_ADDR, 0x04, 0b01000000); //set to 16 bit resolution for 25ms response time and set measurement rate to 25ms
 
 	lcdSerial.print("\xfe\x01"); // clear screen
 	lcdSerial.print("adps9151 ");
@@ -40,29 +37,30 @@ void adps9151_setup() {
 }
 
 void adps9151_loop() {
-	uint8_t readBuff[12];
+	uint8_t buf[12];
 	uint16_t r_ir=0;
 	uint16_t r_red=0;
 	uint16_t r_green=0;
 	uint16_t r_blue=0;
 	uint16_t ir=0;
+	uint16_t status;
 
-	i2cRead(0x0A,readBuff,12);
+	status = st_i2c_read(I2C_ADDR, 0x0A, buf, 12); // TODO retry/re-init on fail
 
-	ir=(readBuff[1]<<8)|readBuff[0];
-	r_green=(readBuff[4]<<8)|readBuff[3];
-	r_blue=(readBuff[7]<<8)|readBuff[6];
-	r_red=(readBuff[10]<<8)|readBuff[9];
+	ir=(buf[1]<<8)|buf[0];
+	r_green=(buf[4]<<8)|buf[3];
+	r_blue=(buf[7]<<8)|buf[6];
+	r_red=(buf[10]<<8)|buf[9];
 
 	Serial.print("ir=");
-  Serial.print(ir,HEX);
-  Serial.print(" r=");
-  Serial.print(r_red,HEX);
-  Serial.print(" g=");
-  Serial.print(r_green,HEX);
-  Serial.print(" b=");
-  Serial.print(r_blue,HEX);
-  Serial.print("\n");
+	Serial.print(ir,HEX);
+	Serial.print(" r=");
+	Serial.print(r_red,HEX);
+	Serial.print(" g=");
+	Serial.print(r_green,HEX);
+	Serial.print(" b=");
+	Serial.print(r_blue,HEX);
+	Serial.print("\n");
 
 	lcd_goto(1, 0);
 	lcdSerial.print(r_red, HEX);
@@ -73,25 +71,9 @@ void adps9151_loop() {
 
 	lcd_goto(1, 15);
 	lcdSerial.print(ir, HEX);
+
+	// TODO add stats: at least min, max.  maybe mean.
 }
 
 
-uint8_t i2cWrite(uint8_t reg, uint8_t val){
-	Wire.beginTransmission(I2C_ADDR);
-	Wire.write(reg);
-	Wire.write(val);
-	return Wire.endTransmission();
-}
-
-uint8_t i2cRead(uint8_t reg, uint8_t *val, uint16_t len){
-	uint8_t status;
-	Wire.beginTransmission(I2C_ADDR);
-	Wire.write(reg);
-	status = Wire.endTransmission();
-	Wire.requestFrom(I2C_ADDR, len);
-	for(uint8_t i=0; i<len; i++){
-	      val[i]=Wire.read();
-	}
-	return status;
-}
 

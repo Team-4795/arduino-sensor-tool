@@ -1,11 +1,12 @@
 #include <Arduino.h>
+#include <Wire.h>
 #include <SoftwareSerial.h>
 #include <HardwareSerial.h>
 #include <gndkeys.h>
-#include <lcdmenu.h>
+#include <sensortool.h>
 
-static char signon_msg[] = "sensortool 1";
-int blink;
+static char signon_msg[] = "sensortool 3";
+uint8_t blink;
 SoftwareSerial lcdSerial(3, 2);  // rxpin, txpin
 Keyboard pdkeys;
 LcdMenu lcdmenu;
@@ -96,6 +97,27 @@ void loop() {
 	}
 }
 
+// subroutines here for now
+uint8_t st_i2c_write_byte(uint8_t addr7, uint8_t reg, uint8_t val){
+	Wire.beginTransmission(addr7);
+	Wire.write(reg);
+	Wire.write(val);
+	return Wire.endTransmission();
+}
+
+uint8_t st_i2c_read(uint8_t addr7, uint8_t reg, uint8_t *val, uint16_t len){
+	uint8_t status;
+	Wire.beginTransmission(addr7);
+	Wire.write(reg);
+	status = Wire.endTransmission();  // should this be endTransmission(false)
+	Wire.requestFrom(addr7, len);
+	for(uint8_t i=0; i<len; i++){
+	      val[i]=Wire.read();
+	}
+	return status;
+}
+
+
 int main(void)
 {
 	init();
@@ -107,7 +129,5 @@ int main(void)
         
 	return 0;
 }
-
-
 
 extern "C" void __cxa_pure_virtual() { while (1); }
