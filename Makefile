@@ -45,7 +45,7 @@ AVRDUDE_PROGRAMMER = arduino
 MCU = atmega328p
 F_CPU = 16000000
 
-EXTRA_OBJS=gndkeys.o lcdmenu.o adread.o
+EXTRA_OBJS=gndkeys.o lcdmenu.o adread.o adps9151.o
 
 ############################################################################
 # Below here nothing should be changed...
@@ -53,6 +53,7 @@ EXTRA_OBJS=gndkeys.o lcdmenu.o adread.o
 ARDUINO = $(INSTALL_DIR)/hardware/arduino/avr/cores/arduino
 # TODO generalize this
 ARDUINO2 = $(INSTALL_DIR)/hardware/arduino/avr/libraries/SoftwareSerial/src
+ARDUINO3 = $(INSTALL_DIR)/hardware/arduino/avr/libraries/Wire/src
 
 AVR_TOOLS_PATH = /usr/bin
 AVRDUDE_PATH = $(INSTALL_DIR)/hardware/tools
@@ -60,19 +61,21 @@ LIBCSRC =   $(ARDUINO)/wiring.c \
 	$(ARDUINO)/wiring_analog.c $(ARDUINO)/wiring_digital.c \
 	$(ARDUINO)/wiring_pulse.c \
 	$(ARDUINO)/wiring_shift.c $(ARDUINO)/WInterrupts.c \
-	$(ARDUINO)/hooks.c 
+	$(ARDUINO)/hooks.c \
+        $(ARDUINO3)/utility/twi.c
 
 ARDLIB=$(INSTALL_DIR)/libraries
 
 LIBCXXSRC = $(ARDUINO)/HardwareSerial.cpp \
 	$(ARDUINO)/HardwareSerial0.cpp \
 	$(ARDUINO)/WMath.cpp \
-	$(ARDUINO)/Print.cpp 
+	$(ARDUINO)/Print.cpp \
+	$(ARDUINO)/Wire.cpp 
 
 LIBCXXSRC2=$(ARDUINO2)/SoftwareSerial.cpp
 
 FORMAT = ihex
-VPATH=$(ARDUINO) $(ARDUINO2)
+VPATH=$(ARDUINO) $(ARDUINO2) $(ARDUINO3) $(ARDUINO3)/utility/
 
 
 # Name of this Makefile (used for "make depend").
@@ -90,8 +93,9 @@ CDEFS = -DF_CPU=$(F_CPU)
 CXXDEFS = -DF_CPU=$(F_CPU)
 
 # Place -I options here
-CINCS = -I$(ARDUINO) -I$(ARDUINO2) -I$(ARDUINO)/../../variants/standard
-CXXINCS = 
+CINCS = -I$(ARDUINO) -I$(ARDUINO2) -I$(ARDUINO)/../../variants/standard -I$(ARDUINO3) 
+CXXINCS =  -I$(ARDUINO) -I$(ARDUINO3)
+
 
 # Compiler flag to set the C Standard level.
 # c89   - "ANSI" C

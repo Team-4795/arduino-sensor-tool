@@ -12,12 +12,14 @@ LcdMenu lcdmenu;
 
 extern void adread_init();
 extern void adread_loop();
+extern void adps9151_setup();
+extern void adps9151_loop();
 
 struct LcdMenu_entry sensor_menu[] = {
 	{1, "1PWM Generator", 0, 0, 0},
 	{2, "2A-to-D reader", adread_init, adread_loop, 0},
 	{3, "3i2c scan", 0, 0, 0},
-	{4, "4RevColor3 ADPS9151", 0, 0, 0},
+	{4, "4RevColor3 ADPS9151", adps9151_setup, adps9151_loop, 0},
 
 	{5, "5RevColor2 TMD37821", 0, 0, 0},
 	{6, "6VL53L0X distance", 0, 0, 0},
