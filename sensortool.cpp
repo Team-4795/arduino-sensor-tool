@@ -15,6 +15,8 @@ extern void adread_init();
 extern void adread_loop();
 extern void adps9151_setup();
 extern void adps9151_loop();
+extern void keytest_setup();
+extern void keytest_loop();
 
 struct LcdMenu_entry sensor_menu[] = {
 	{1, "1PWM Generator", 0, 0, 0},
@@ -25,7 +27,7 @@ struct LcdMenu_entry sensor_menu[] = {
 	{5, "5RevColor2 TMD37821", 0, 0, 0},
 	{6, "6VL53L0X distance", 0, 0, 0},
 	{7, "7VCNL4010 distance", 0, 0, 0},
-	{8, "8keypad test", 0, 0, 0},
+	{8, "8keypad test", keytest_setup, keytest_loop, 0},
 
 	{9, "9PWM input decoder", 0, 0, 0},
 };
