@@ -4,31 +4,32 @@
  */
 
 typedef void (*PFV)();
+typedef uint8_t (*PF8)();
 
 struct LcdMenu_entry {
   int code;
   const char *label;
   PFV init;
-  PFV loop;
+  PF8 loop;
 };
 
 
 class LcdMenu {
- LcdMenu_entry *menu;
- uint8_t n_entries;
+	LcdMenu_entry *menu;
+	uint8_t n_entries;
 	int top;        // entry displayed at top of screen
 	int cur_line;   // screen line that cursor is pointing to
 	int cur_item;   // current menu item index
 
- private:
-  void draw(LcdMenu_entry *menu, int n_entries, int top_entry);
+  private:
+	void draw(LcdMenu_entry *menu, int n_entries, int top_entry);
    
  public:
-   void display(LcdMenu_entry *menu, int n_entries);
+	void display(LcdMenu_entry *menu, int n_entries);
 
-   int keypress(uint8_t key);
-// old interface
-   int run(LcdMenu_entry *menu, int n_entries);
+	int keypress(unsigned char key);
+	// old interface
+	int run(LcdMenu_entry *menu, int n_entries);
 };
 
 extern const char lcd_clear_str[];

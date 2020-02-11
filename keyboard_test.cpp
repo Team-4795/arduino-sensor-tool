@@ -5,11 +5,7 @@
 
 #include <Arduino.h>
 #include <Wire.h>
-#include "gndkeys.h"
 #include "sensortool.h"
-
-extern Keyboard pdkeys;
-extern LcdMenu lcdmenu;
 
 uint8_t outchar_count;
 
@@ -23,7 +19,7 @@ void keytest_setup()
 	outchar_count = 0;
 }
 
-void keytest_loop()
+uint8_t keytest_loop()
 {
 	unsigned char k = pdkeys.getkey();
 	if(k) {
@@ -41,6 +37,7 @@ void keytest_loop()
 //		lcdSerial.write(' ');
 		outchar_count += 1;
 	}
+	return 0;
 }
 
 

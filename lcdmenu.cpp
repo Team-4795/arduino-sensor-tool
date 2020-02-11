@@ -43,8 +43,11 @@ lcd_goto(uint8_t ln, uint8_t pos)
  * display menu and set up for choosing an entry
  */
 void
-LcdMenu::display(LcdMenu_entry *menu, int n_entries)
+LcdMenu::display(LcdMenu_entry *mp, int n)
 {
+	menu = mp;
+	n_entries = n;
+
 	Serial.print("menu_n ");
 	Serial.print(n_entries);
 	Serial.print("\r\n");
@@ -62,7 +65,7 @@ LcdMenu::display(LcdMenu_entry *menu, int n_entries)
  * if an entry is selected, returns nonzero, else returns 0.
  */
 int
-LcdMenu::keypress(uint8_t key)
+LcdMenu::keypress(unsigned char key)
 {
 	int new_item = cur_item;
  	switch(key) {
@@ -113,86 +116,6 @@ LcdMenu::keypress(uint8_t key)
 	return 0;
 }
 
-/*
- * display menu, use keypad UP/DOWN to select an entry.
- *    LEFT key cancels, returning -1
- *	RIGHT key selects, returns entry index.
-*/
-int
-LcdMenu::run(LcdMenu_entry *menu, int n_entries)
-{
-/*	int top;        // entry displayed at top of screen
-	int cur_line;   // screen line that cursor is pointing to
-	int cur_item;   // current menu item index
-*/
- 	int new_item;
-
-	Serial.print("menu_n ");
-	Serial.print(n_entries);
-	Serial.print("\r\n");
-	
-	cur_line = 0; 
-	top = 0;
-	cur_item = top + cur_line;
-	draw(menu, n_entries, top);
-	lcdSerial.print(lcd_blink_cursor_str);
-	lcd_gotoline(cur_line);
- 	int k;
-
-	// invariant at the top of the while loop:
-	//   cur_item = top + cur_line
-	while(1) {
-		new_item = cur_item;
-		pdkeys.poll();
-		k = pdkeys.getkey();
-		switch(k) {
- 		case K_RIGHT:
- 			return cur_item;
- 			break;
-		case K_UP:
-			if(cur_item > 0)
-				new_item = cur_item - 1;
-			break;
-		case K_DOWN:
-			if(cur_item <= n_entries)
-				new_item = cur_item + 1;
-			break;
-		}
-
-		if(new_item != cur_item) {
-			Serial.print(" new_item ");
-			Serial.print(new_item);
-			// deal with change of cur-item
-			if(new_item < top) {   // offscreen above
-				top -= 4;
-				if(top < 0)
-					top = 0;
-				draw(menu, n_entries, top);
-				cur_line = new_item - top;
-			} else if(new_item > top + 3) { // offscreen below
-				top += 4;
-				if(new_item + top > n_entries) {
-					top = n_entries - 4;
-				}
-				draw(menu, n_entries, top);
-				cur_line = new_item - top;
-			} else  {  // still onscreen but moved cursor
-				cur_line = new_item - top;
-			}
- 			lcd_gotoline(cur_line);
-			cur_item = new_item;
-
-			Serial.print(" cur_item ");
-			Serial.print(cur_item);
-			Serial.print(" top ");
-			Serial.print(top);
-			Serial.print(" cur_line ");
-			Serial.print(cur_line);
-			Serial.print("\r\n");
-		}
-		delay(30);
-	}
-}
 
 /*
  * draw a screenful of menu options, starting with entry number 'top'.
@@ -207,7 +130,6 @@ LcdMenu::draw(LcdMenu_entry *menu, int n_entries, int top)
 
 	lcdSerial.print(lcd_clear_str);
 	for(i = 0; i < 4; i++) {
-		// move to line i
 		lcd_gotoline(i);
 		lcdSerial.print(menu[top+i].label);
 	}

@@ -36,7 +36,7 @@ void adps9151_setup() {
 	}
 }
 
-void adps9151_loop() {
+uint8_t adps9151_loop() {
 	uint8_t buf[12];
 	uint16_t r_ir=0;
 	uint16_t r_red=0;
@@ -44,6 +44,10 @@ void adps9151_loop() {
 	uint16_t r_blue=0;
 	uint16_t ir=0;
 	uint16_t status;
+
+	unsigned char k = pdkeys.getkey();
+	if(k == K_LEFT)
+ 		return 1;
 
 	status = st_i2c_read(I2C_ADDR, 0x0A, buf, 12); // TODO retry/re-init on fail
 
@@ -73,6 +77,7 @@ void adps9151_loop() {
 	lcdSerial.print(ir, HEX);
 
 	// TODO add stats: at least min, max.  maybe mean.
+	return 0;
 }
 
 

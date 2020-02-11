@@ -1,22 +1,19 @@
 #include <Arduino.h>
 #include <Wire.h>
-#include <SoftwareSerial.h>
-#include <HardwareSerial.h>
-#include <gndkeys.h>
 #include <sensortool.h>
 
-static char signon_msg[] = "sensortool 3";
+static char signon_msg[] = "sensortool 4";
 uint8_t blink;
 SoftwareSerial lcdSerial(3, 2);  // rxpin, txpin
 Keyboard pdkeys;
 LcdMenu lcdmenu;
 
 extern void adread_init();
-extern void adread_loop();
+extern uint8_t adread_loop();
 extern void adps9151_setup();
-extern void adps9151_loop();
+extern uint8_t adps9151_loop();
 extern void keytest_setup();
-extern void keytest_loop();
+extern uint8_t keytest_loop();
 
 struct LcdMenu_entry sensor_menu[] = {
 	{1, "1PWM Generator", 0, 0},
@@ -63,40 +60,47 @@ void setup() {
 	blink = 0;
 
 	delay(400);              // wait (ms)
+
+	lcdmenu.display(sensor_menu, sensor_menu_N);
 }
 
 
 void loop() {
-	int menu_choice;
+	static int menu_choice;
 
- 	menu_choice = lcdmenu.run(sensor_menu, sensor_menu_N);
+	pdkeys.poll();
+	if(menu_choice && sensor_menu[menu_choice].loop) {
+		uint8_t rc = sensor_menu[menu_choice].loop();
+ 		if(rc) {
+			pdkeys.flush();
+			lcdmenu.display(sensor_menu, sensor_menu_N);
+			menu_choice = 0;	
+		}
+	} else {
+		unsigned char k = pdkeys.getkey();
+		menu_choice = lcdmenu.keypress(k);
 
-	Serial.print("menu_choice ");
-	Serial.print(menu_choice);
-	Serial.write('\n');
-	Serial.write('\r');
+		if(menu_choice) {
+			Serial.print("menu_choice ");
+			Serial.print(menu_choice);
+			Serial.write('\n');
+			Serial.write('\r');
 
-	lcdSerial.print("\xfe\x01"); // clear screen
-        lcdSerial.print("\x7c\x8c"); // backlight 40%
-	delay(100);
-
-	if(sensor_menu[menu_choice].init)
-		sensor_menu[menu_choice].init();
-
-	if(sensor_menu[menu_choice].loop) {
-		// TODO can we ever break out of this? how?
-		while(1) {
-			pdkeys.poll();
-			sensor_menu[menu_choice].loop();
-			
-			if(blink)
-				digitalWrite(13, HIGH);   // set the LED on
-			else
-				digitalWrite(13, LOW);    // set the LED off)
-			delay(30);
-			blink = ~blink;
+			lcdSerial.print("\xfe\x01"); // clear screen
+		        lcdSerial.print("\x7c\x8c"); // backlight 40%
+			pdkeys.flush();
+			delay(100);
+			if(sensor_menu[menu_choice].init)
+				sensor_menu[menu_choice].init();
 		}
 	}
+
+ 	if(blink)
+ 		digitalWrite(13, HIGH);   // set the LED on
+ 	else 
+ 		digitalWrite(13, LOW);    // set the LED off
+	delay(30);
+	blink = ~blink;
 }
 
 // subroutines here for now

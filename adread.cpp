@@ -5,7 +5,7 @@
 #include <Arduino.h>
 #include <SoftwareSerial.h>
 #include <HardwareSerial.h>
-#include "lcdmenu.h"
+#include "sensortool.h"
 
 extern SoftwareSerial lcdSerial;
 
@@ -17,14 +17,18 @@ adread_init()
 
 const char spinner_chars[] = {'-', '+', '|', '/', 'x'};
 
-void
+uint8_t
 adread_loop()
 {
 	int adval[4];
 	uint8_t i;
 	static uint8_t loop_count;
 	static uint8_t output_count;
-		
+
+	unsigned char k = pdkeys.getkey();
+	if(k == K_LEFT)
+ 		return 1;
+	
 	for(i = 0; i < 4; i++) {
 	        adval[i] = analogRead(i);
 	}
@@ -48,4 +52,5 @@ adread_loop()
 		lcdSerial.print( spinner_chars[ output_count & 1 ]);
 		output_count++;			 	
 	}
+	return 0;
 }
