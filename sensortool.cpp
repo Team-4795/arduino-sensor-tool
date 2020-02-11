@@ -61,7 +61,7 @@ void setup() {
 
 	delay(400);              // wait (ms)
 
-	lcdmenu.display(sensor_menu, sensor_menu_N);
+	lcdmenu.init_display(sensor_menu, sensor_menu_N);
 }
 
 
@@ -73,7 +73,8 @@ void loop() {
 		uint8_t rc = sensor_menu[menu_choice].loop();
  		if(rc) {
 			pdkeys.flush();
-			lcdmenu.display(sensor_menu, sensor_menu_N);
+			//lcdmenu.display(sensor_menu, sensor_menu_N);
+			lcdmenu.draw();				
 			menu_choice = 0;	
 		}
 	} else {

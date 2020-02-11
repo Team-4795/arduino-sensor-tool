@@ -22,14 +22,13 @@ class LcdMenu {
 	int cur_item;   // current menu item index
 
   private:
-	void draw(LcdMenu_entry *menu, int n_entries, int top_entry);
+//	void draw(LcdMenu_entry *menu, int n_entries, int top_entry);
    
  public:
-	void display(LcdMenu_entry *menu, int n_entries);
+	void init_display(LcdMenu_entry *menu, int n_entries);
 
 	int keypress(unsigned char key);
-	// old interface
-	int run(LcdMenu_entry *menu, int n_entries);
+	void draw();
 };
 
 extern const char lcd_clear_str[];
