@@ -12,14 +12,10 @@
 
 extern int checkkbd(void);
 
-typedef void (*keyhook)(unsigned char k);
-
 #define ST_KBD_BUFF_SIZE 8
 
 class Keyboard {
 private:
-	keyhook k_hook;
-	
 	unsigned char k_pressed;
 	unsigned char k_new;
 
@@ -31,9 +27,8 @@ private:
 	
 public:
 	Keyboard(void);
-	void addhook(keyhook kh);
 	
-	int poll(void);
+	void poll(void);
 
 	void flush();
 	unsigned char getkey(void);

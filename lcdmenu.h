@@ -10,16 +10,24 @@ struct LcdMenu_entry {
   const char *label;
   PFV init;
   PFV loop;
-  PFV event;
 };
 
 
 class LcdMenu {
+ LcdMenu_entry *menu;
+ uint8_t n_entries;
+	int top;        // entry displayed at top of screen
+	int cur_line;   // screen line that cursor is pointing to
+	int cur_item;   // current menu item index
 
  private:
   void draw(LcdMenu_entry *menu, int n_entries, int top_entry);
    
  public:
+   void display(LcdMenu_entry *menu, int n_entries);
+
+   int keypress(uint8_t key);
+// old interface
    int run(LcdMenu_entry *menu, int n_entries);
 };
 

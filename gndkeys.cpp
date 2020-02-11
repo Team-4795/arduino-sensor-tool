@@ -14,8 +14,6 @@ Keyboard::Keyboard()
 // possible future args: port addr, bitmask
 	k_pressed = 0;
 	k_new = 0;
-	k_hook = NULL;
-
 	flush();
 	
 	// keypad: port D bits 7:3.  input with pullup
@@ -23,12 +21,8 @@ Keyboard::Keyboard()
 	PORTD |= 0xf8;
 }
 
-void 
-Keyboard::addhook(keyhook kh) {
-	k_hook = kh;
-}
-
-int Keyboard::poll()
+void
+Keyboard::poll()
 {
 	unsigned char rawkeys;
 	unsigned char m;
@@ -47,11 +41,7 @@ int Keyboard::poll()
 					Serial.write('\n');
 					Serial.write('\r');*/
 					
-					if(k_hook)
-						k_hook(i);
- 					else
-						enqueue(i);
-					res = i;
+					enqueue(i);
 				}
 				if( !(m & rawkeys) && (m & k_pressed)) {
 					// key released
@@ -60,15 +50,13 @@ int Keyboard::poll()
 					Serial.print(i, DEC);
 					Serial.write('\n');
 					Serial.write('\r');*/
-					// todo send key-UP to user
+					// todo optional enqueue key-UP for user
 				}
 			}
 			k_pressed = rawkeys;
 		}
 	}
 	k_new = rawkeys;
-
-	return res;
 }
 
 /* input queue of pending keycodes */

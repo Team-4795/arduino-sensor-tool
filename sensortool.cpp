@@ -19,17 +19,17 @@ extern void keytest_setup();
 extern void keytest_loop();
 
 struct LcdMenu_entry sensor_menu[] = {
-	{1, "1PWM Generator", 0, 0, 0},
-	{2, "2A-to-D reader", adread_init, adread_loop, 0},
-	{3, "3i2c scan", 0, 0, 0},
-	{4, "4RevColor3 ADPS9151", adps9151_setup, adps9151_loop, 0},
+	{1, "1PWM Generator", 0, 0},
+	{2, "2A-to-D reader", adread_init, adread_loop},
+	{3, "3i2c scan", 0, 0},
+	{4, "4RevColor3 ADPS9151", adps9151_setup, adps9151_loop},
 
-	{5, "5RevColor2 TMD37821", 0, 0, 0},
-	{6, "6VL53L0X distance", 0, 0, 0},
-	{7, "7VCNL4010 distance", 0, 0, 0},
-	{8, "8keypad test", keytest_setup, keytest_loop, 0},
+	{5, "5RevColor2 TMD37821", 0, 0},
+	{6, "6VL53L0X distance", 0, 0},
+	{7, "7VCNL4010 distance", 0, 0},
+	{8, "8keypad test", keytest_setup, keytest_loop},
 
-	{9, "9PWM input decoder", 0, 0, 0},
+	{9, "9PWM input decoder", 0, 0},
 };
 const int sensor_menu_N = (sizeof(sensor_menu)/sizeof(LcdMenu_entry));
 
@@ -67,7 +67,6 @@ void setup() {
 
 
 void loop() {
-	int i;
 	int menu_choice;
 
  	menu_choice = lcdmenu.run(sensor_menu, sensor_menu_N);
@@ -87,6 +86,7 @@ void loop() {
 	if(sensor_menu[menu_choice].loop) {
 		// TODO can we ever break out of this? how?
 		while(1) {
+			pdkeys.poll();
 			sensor_menu[menu_choice].loop();
 			
 			if(blink)

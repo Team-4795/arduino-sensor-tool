@@ -15,7 +15,6 @@ uint8_t outchar_count;
 
 void keytest_setup()
 {
-	pdkeys.addhook(NULL);
 	pdkeys.flush();
 
 	lcdSerial.print("\xfe\x01"); // clear screen
@@ -26,8 +25,6 @@ void keytest_setup()
 
 void keytest_loop()
 {
-	pdkeys.poll();
-
 	unsigned char k = pdkeys.getkey();
 	if(k) {
 		Serial.print("key ");
