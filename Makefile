@@ -45,7 +45,7 @@ AVRDUDE_PROGRAMMER = arduino
 MCU = atmega328p
 F_CPU = 16000000
 
-EXTRA_OBJS=gndkeys.o lcdmenu.o adread.o adps9151.o keyboard_test.o
+EXTRA_OBJS=gndkeys.o lcdmenu.o adread.o adps9151.o keyboard_test.o tinystats.o
 
 ############################################################################
 # Below here nothing should be changed...

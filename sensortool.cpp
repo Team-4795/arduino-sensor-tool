@@ -1,12 +1,14 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <sensortool.h>
+#include "tinystats.h"
 
 static char signon_msg[] = "sensortool 4";
 uint8_t blink;
 SoftwareSerial lcdSerial(3, 2);  // rxpin, txpin
 Keyboard pdkeys;
 LcdMenu lcdmenu;
+TinyStats tstats[4];
 
 extern void adread_init();
 extern uint8_t adread_loop();

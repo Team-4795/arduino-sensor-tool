@@ -12,7 +12,8 @@ extern SoftwareSerial lcdSerial;
 void
 adread_init()
 {
-	
+ 	for(uint8_t i = 0; i < 4; i++)
+		tstats[i].clear();
 }
 
 const char spinner_chars[] = {'-', '+', '|', '/', 'x'};
@@ -27,10 +28,14 @@ adread_loop()
 
 	unsigned char k = pdkeys.getkey();
 	if(k == K_LEFT)
- 		return 1;
+		return 1;
+	 if(k == K_ENTER)
+	 	for(i = 0; i < 4; i++)
+			tstats[i].clear();
 	
 	for(i = 0; i < 4; i++) {
 	        adval[i] = analogRead(i);
+		tstats[i].item( adval[i] );
 	}
 
 	if((loop_count++ % 30) == 0) {
@@ -41,6 +46,12 @@ adread_loop()
 		        lcdSerial.print("=");
 		        lcdSerial.print(adval[i], DEC);
 		        lcdSerial.write(' ');
+
+		        lcdSerial.print(tstats[i].min, DEC);
+		        lcdSerial.write(' ');
+//		        lcdSerial.print(stats[i].mean(), DEC);
+//		        lcdSerial.write(' ');
+		        lcdSerial.print(tstats[i].max, DEC);
 		        lcdSerial.write(' ');
 		        lcdSerial.write(' ');
 
