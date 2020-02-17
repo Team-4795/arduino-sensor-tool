@@ -113,7 +113,7 @@ LcdMenu::keypress(unsigned char key)
 		Serial.print(cur_line);
 		Serial.print("\r\n");
 	}
-	return 0;
+	return -1;
 }
 
 

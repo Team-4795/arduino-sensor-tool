@@ -3,24 +3,28 @@
 #include <sensortool.h>
 #include "tinystats.h"
 
-static char signon_msg[] = "sensortool 4";
+static char signon_msg[] = "sensortool 5";
 uint8_t blink;
 SoftwareSerial lcdSerial(3, 2);  // rxpin, txpin
 Keyboard pdkeys;
 LcdMenu lcdmenu;
 TinyStats tstats[4];
 
+extern void pwmgen_init();
+extern uint8_t pwmgen_loop();
 extern void adread_init();
 extern uint8_t adread_loop();
+extern void i2cscan_init();
+extern uint8_t i2cscan_loop();
 extern void adps9151_setup();
 extern uint8_t adps9151_loop();
 extern void keytest_setup();
 extern uint8_t keytest_loop();
 
 struct LcdMenu_entry sensor_menu[] = {
-	{1, "1PWM Generator", 0, 0},
+	{1, "1PWM Generator", pwmgen_init, pwmgen_loop},
 	{2, "2A-to-D reader", adread_init, adread_loop},
-	{3, "3i2c scan", 0, 0},
+	{3, "3i2c scan", i2cscan_init, i2cscan_loop},
 	{4, "4RevColor3 ADPS9151", adps9151_setup, adps9151_loop},
 
 	{5, "5RevColor2 TMD37821", 0, 0},
@@ -36,7 +40,6 @@ void setup() {
 	int t;
 
 	// initialize digital pins
-
 	pinMode(13, OUTPUT);    // PB5 LED connected on most Arduino boards:
 //	pinMode(8, OUTPUT);     // PB0 protoshield LEDs can be hooked up here
 	pinMode(2, OUTPUT);	// PD2 software serial for LCD
@@ -52,30 +55,28 @@ void setup() {
 	Serial.print("\n\r");
 
 	lcdSerial.begin(9600);
+// 	this seems to mess up the display	
+//	lcdSerial.print("\x7c\x05\x7c\x03");   // 4 lines, 20 chars.
 	lcdSerial.print("\xfe\x01"); // clear screen
+	delay(100);
+	lcdSerial.print("\x7c\x8c"); // backlight 40%
+	delay(100);
 	lcdSerial.print(signon_msg);
-//	lcdvar_draw();
 
-	lcdSerial.print("\xfe\x93 A");  // line 1
-	Serial.write('\n');
-	Serial.write('\r');
 	blink = 0;
-
 	delay(400);              // wait (ms)
-
 	lcdmenu.init_display(sensor_menu, sensor_menu_N);
 }
 
 
 void loop() {
-	static int menu_choice;
+	static int menu_choice = -1;
 
 	pdkeys.poll();
-	if(menu_choice && sensor_menu[menu_choice].loop) {
+	if(menu_choice >= 0 && sensor_menu[menu_choice].loop) {
 		uint8_t rc = sensor_menu[menu_choice].loop();
  		if(rc) {
 			pdkeys.flush();
-			//lcdmenu.display(sensor_menu, sensor_menu_N);
 			lcdmenu.draw();				
 			menu_choice = 0;	
 		}
@@ -83,14 +84,13 @@ void loop() {
 		unsigned char k = pdkeys.getkey();
 		menu_choice = lcdmenu.keypress(k);
 
-		if(menu_choice) {
+		if(menu_choice >= 0) {
 			Serial.print("menu_choice ");
 			Serial.print(menu_choice);
 			Serial.write('\n');
 			Serial.write('\r');
 
 			lcdSerial.print("\xfe\x01"); // clear screen
-		        lcdSerial.print("\x7c\x8c"); // backlight 40%
 			pdkeys.flush();
 			delay(100);
 			if(sensor_menu[menu_choice].init)
