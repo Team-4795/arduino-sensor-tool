@@ -12,13 +12,19 @@ uint8_t PORTD, DDRD, PIND;
 Keyboard::Keyboard()
 {
 // possible future args: port addr, bitmask
-	k_pressed = 0;
-	k_new = 0;
-	flush();
-	
+  ReInit();
+}
+
+void
+Keyboard::ReInit()
+{
 	// keypad: port D bits 7:3.  input with pullup
 	DDRD &=  0x07;
 	PORTD |= 0xf8;
+
+	k_pressed = 0;
+	k_new = 0;
+	flush();
 }
 
 void
@@ -58,6 +64,7 @@ Keyboard::poll()
 	}
 	k_new = rawkeys;
 }
+
 
 /* input queue of pending keycodes */
 void

@@ -51,7 +51,12 @@ LcdMenu::init_display(LcdMenu_entry *mp, int n)
 	Serial.print("menu_n ");
 	Serial.print(n_entries);
 	Serial.print("\r\n");
-	
+	reinit_display();
+}
+
+void
+LcdMenu::reinit_display()
+{
 	cur_line = 0; 
 	top = 0;
 	cur_item = top + cur_line;

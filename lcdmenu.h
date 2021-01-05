@@ -26,6 +26,7 @@ class LcdMenu {
    
  public:
 	void init_display(LcdMenu_entry *menu, int n_entries);
+	void reinit_display();
 
 	int keypress(unsigned char key);
 	void draw();

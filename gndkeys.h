@@ -29,6 +29,7 @@ public:
 	Keyboard(void);
 	
 	void poll(void);
+	void ReInit(void);
 
 	void flush();
 	unsigned char getkey(void);

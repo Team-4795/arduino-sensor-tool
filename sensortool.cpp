@@ -1,9 +1,11 @@
 #include <Arduino.h>
 #include <Wire.h>
+#include <HardwareSerial.h>
 #include <sensortool.h>
 #include "tinystats.h"
 
-static char signon_msg[] = "sensortool 5";
+
+static char signon_msg[] = "sensortool 6";
 uint8_t blink;
 SoftwareSerial lcdSerial(3, 2);  // rxpin, txpin
 Keyboard pdkeys;
@@ -76,9 +78,12 @@ void loop() {
 	if(menu_choice >= 0 && sensor_menu[menu_choice].loop) {
 		uint8_t rc = sensor_menu[menu_choice].loop();
  		if(rc) {
-			pdkeys.flush();
+		  pdkeys.ReInit();
+			lcdSerial.print("\xfe\x01"); // clear screen
+			delay(500);
+			menu_choice = -1;	
+			lcdmenu.reinit_display();				
 			lcdmenu.draw();				
-			menu_choice = 0;	
 		}
 	} else {
 		unsigned char k = pdkeys.getkey();
