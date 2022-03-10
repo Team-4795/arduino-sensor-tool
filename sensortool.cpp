@@ -22,6 +22,9 @@ extern void adps9151_setup();
 extern uint8_t adps9151_loop();
 extern void keytest_setup();
 extern uint8_t keytest_loop();
+extern void ws2812b_setup();
+extern uint8_t ws2812b_loop();
+extern uint8_t ws2812b_loop_all();
 
 struct LcdMenu_entry sensor_menu[] = {
 	{1, "1PWM Generator", pwmgen_init, pwmgen_loop},
@@ -34,7 +37,9 @@ struct LcdMenu_entry sensor_menu[] = {
 	{7, "7VCNL4010 distance", 0, 0},
 	{8, "8keypad test", keytest_setup, keytest_loop},
 
-	{9, "9PWM input decoder", 0, 0},
+	{9, "9WS2812b NeoPixel", ws2812b_setup, ws2812b_loop},
+	{10, "10WS2812b NeoPixel all", ws2812b_setup, ws2812b_loop_all},
+	{11, "11PWM input decoder", 0, 0},
 };
 const int sensor_menu_N = (sizeof(sensor_menu)/sizeof(LcdMenu_entry));
 

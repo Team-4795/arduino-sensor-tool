@@ -1,5 +1,10 @@
 /*
  * sensortool module to generate 2 channels of "servo" PWM
+ *  atmega328p output pins 
+ *	OC1A	PB1	arduino pin digital 9
+ *	OC1B	PB2     arduino pin digital 10
+ *		
+ *	
  */
 
 #include <Arduino.h>

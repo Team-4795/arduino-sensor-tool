@@ -37,7 +37,8 @@
 
 TARGET = sensortool
 INSTALL_DIR = /usr/share/arduino
-PORT = /dev/ttyUSB4
+#PORT = /dev/ttyUSB7
+PORT = /dev/serial/by-id/usb-FTDI_TTL232R_FTGCHU4Q-if00-port0
 #DOWNLOAD_RATE = 115200
 DOWNLOAD_RATE = 57600
 #DOWNLOAD_RATE = 19200
@@ -45,7 +46,7 @@ AVRDUDE_PROGRAMMER = arduino
 MCU = atmega328p
 F_CPU = 16000000
 
-EXTRA_OBJS=gndkeys.o lcdmenu.o adread.o adps9151.o keyboard_test.o i2cscan.o tinystats.o pwmgen.o lcdvar.o
+EXTRA_OBJS=gndkeys.o lcdmenu.o adread.o adps9151.o keyboard_test.o i2cscan.o tinystats.o pwmgen.o lcdvar.o ws2812b.o Adafruit_NeoPixel.o
 
 ############################################################################
 # Below here nothing should be changed...
