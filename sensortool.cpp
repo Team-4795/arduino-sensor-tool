@@ -5,7 +5,7 @@
 #include "tinystats.h"
 
 
-static char signon_msg[] = "sensortool 6";
+static char signon_msg[] = "sensortool 7";
 uint8_t blink;
 SoftwareSerial lcdSerial(3, 2);  // rxpin, txpin
 Keyboard pdkeys;
