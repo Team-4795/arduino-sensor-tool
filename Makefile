@@ -46,7 +46,7 @@ AVRDUDE_PROGRAMMER = arduino
 MCU = atmega328p
 F_CPU = 16000000
 
-EXTRA_OBJS=gndkeys.o lcdmenu.o adread.o adps9151.o keyboard_test.o i2cscan.o tinystats.o pwmgen.o lcdvar.o ws2812b.o Adafruit_NeoPixel.o
+EXTRA_OBJS=gndkeys.o lcdmenu.o adread.o adps9151.o keyboard_test.o i2cscan.o tinystats.o pwmgen.o lcdvar.o ws2812b.o Adafruit_NeoPixel.o simplePWMread.o pwmread.o SoftwareSerialOutput.o
 
 ############################################################################
 # Below here nothing should be changed...
@@ -73,7 +73,7 @@ LIBCXXSRC = $(ARDUINO)/HardwareSerial.cpp \
 	$(ARDUINO)/Print.cpp \
 	$(ARDUINO)/Wire.cpp 
 
-LIBCXXSRC2=$(ARDUINO2)/SoftwareSerial.cpp
+#LIBCXXSRC2=$(ARDUINO2)/SoftwareSerialOutput.cpp
 
 FORMAT = ihex
 VPATH=$(ARDUINO) $(ARDUINO2) $(ARDUINO3) $(ARDUINO3)/utility/

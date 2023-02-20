@@ -25,21 +25,21 @@ extern uint8_t keytest_loop();
 extern void ws2812b_setup();
 extern uint8_t ws2812b_loop();
 extern uint8_t ws2812b_loop_all();
+extern void pwmread_init();
+extern uint8_t pwmread_loop();
 
 struct LcdMenu_entry sensor_menu[] = {
-	{1, "1PWM Generator", pwmgen_init, pwmgen_loop},
-	{2, "2A-to-D reader", adread_init, adread_loop},
-	{3, "3i2c scan", i2cscan_init, i2cscan_loop},
-	{4, "4RevColor3 ADPS9151", adps9151_setup, adps9151_loop},
-
-	{5, "5RevColor2 TMD37821", 0, 0},
-	{6, "6VL53L0X distance", 0, 0},
-	{7, "7VCNL4010 distance", 0, 0},
-	{8, "8keypad test", keytest_setup, keytest_loop},
-
-	{9, "9WS2812b NeoPixel", ws2812b_setup, ws2812b_loop},
-	{10, "10WS2812b NeoPixel all", ws2812b_setup, ws2812b_loop_all},
-	{11, "11PWM input decoder", 0, 0},
+	{ 1, "1 PWM Generator", pwmgen_init, pwmgen_loop},
+	{ 2, "2 PWM input decode", pwmread_init, pwmread_loop},
+	{ 3, "3 A-to-D reader", adread_init, adread_loop},
+	{ 4, "4 i2c scan", i2cscan_init, i2cscan_loop},
+	{ 5, "5 RevColor3 ADPS9151", adps9151_setup, adps9151_loop},
+	{ 6, "6 RevColor2 TMD37821", 0, 0},
+	{ 7, "7 VL53L0X distance", 0, 0},
+	{ 8, "8 VCNL4010 distance", 0, 0},
+	{ 9, "9 keypad test", keytest_setup, keytest_loop},
+	{10, "10 WS2812b NeoPixel", ws2812b_setup, ws2812b_loop},
+	{11, "11 WS2812b all", ws2812b_setup, ws2812b_loop_all},
 };
 const int sensor_menu_N = (sizeof(sensor_menu)/sizeof(LcdMenu_entry));
 
