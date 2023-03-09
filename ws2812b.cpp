@@ -37,8 +37,6 @@ Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 //   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
 //   NEO_RGBW    Pixels are wired for RGBW bitstream (NeoPixel RGBW products)
 
-
-
 void colorWipe(uint32_t color, int wait);
 void theaterChase(uint32_t color, int wait);
 void rainbow(int wait);
@@ -47,6 +45,7 @@ void theaterChaseRainbow(int wait);
 // global state
 int ws2812b_firstPixelHue;
 int8_t ws2812b_skip;
+int8_t ws2812b_color;
 
 // setup() function -- runs once at startup --------------------------------
 
@@ -57,7 +56,8 @@ void ws2812b_setup() {
 	
 	ws2812b_firstPixelHue = 0;
 	ws2812b_skip = 0;
-
+	ws2812b_color = 0;
+	
 // These lines are specifically to support the Adafruit Trinket 5V 16 MHz.
   // Any other board, you can remove this part (but no harm leaving it):
 #if defined(__AVR_ATtiny85__) && (F_CPU == 16000000)
@@ -73,13 +73,24 @@ void ws2812b_setup() {
 
 // loop() function -- runs repeatedly as long as board is on ---------------
 
-uint8_t ws2812b_loop(void) {
-
+uint8_t ws2812b_loop(void)
+{
 	// like rainbow(10); 
-	ws2812b_firstPixelHue += 256;
-	strip.rainbow(ws2812b_firstPixelHue);
+	int16_t i;
+	if(ws2812b_color==0) {
+		ws2812b_firstPixelHue += 256;
+		strip.rainbow(ws2812b_firstPixelHue);
+	} else {
+		for(i = 0; i < LED_COUNT; i++) {
+			uint8_t red, green, blue;
+			red  =  (ws2812b_color & 1) * 255;
+			green = ((ws2812b_color & 2) >> 1) * 255;
+			blue  = ((ws2812b_color & 4) >> 2) * 255;
+			strip.setPixelColor(i, strip.Color(red, green, blue) );
+		}
+	}
+	
 	if(ws2812b_skip) {
-		int16_t i;
 		for(i = 0; i < LED_COUNT; i++) {
 			if(((i/ws2812b_skip) % 2) == 0)
 				strip.setPixelColor(i, 0);
@@ -96,25 +107,34 @@ uint8_t ws2812b_loop(void) {
 			ws2812b_skip = 1;
 		else if(ws2812b_skip == 1)
 			ws2812b_skip = 5;
-		lcdSerial.print("\xfe\x94");  // line 3 start
-		lcdSerial.print("skip ");
-		lcdSerial.print(ws2812b_skip, HEX);
-
-	}
-	if(k == K_DOWN) {
-		if(ws2812b_skip > 0)
+		else if(ws2812b_skip == 5)
 			ws2812b_skip = 0;
 		lcdSerial.print("\xfe\x94");  // line 3 start
 		lcdSerial.print("skip ");
 		lcdSerial.print(ws2812b_skip, HEX);
-	}
-	if(k == K_LEFT) {
+	} else if(k == K_DOWN) {
+		lcdSerial.print("\xfe\xd4");  // line 4 start
+		if(ws2812b_color == 7) {
+			ws2812b_color = 0;
+			lcdSerial.print("rainbow  ");
+		} else {
+			ws2812b_color += 1;
+			lcdSerial.print("RGB=");
+			lcdSerial.print(ws2812b_color&1, HEX);
+			lcdSerial.print(",");
+			lcdSerial.print((ws2812b_color&2)>>1, HEX);
+			lcdSerial.print(",");
+			lcdSerial.print((ws2812b_color&4)>>2, HEX);
+		}
+	} else if(k == K_LEFT) {
 		strip.clear();
 		strip.show();
 		return 1;
-	} else
-		return 0;
+	} 
+
+	return 0;
 }
+
 
 uint8_t ws2812b_loop_all(void) {
   // Fill along the length of the strip in various colors...
@@ -207,3 +227,6 @@ void theaterChaseRainbow(int wait) {
     }
   }
 }
+
+
+

@@ -37,11 +37,16 @@
 
 TARGET = sensortool
 INSTALL_DIR = /usr/share/arduino
-#PORT = /dev/ttyUSB7
-PORT = /dev/serial/by-id/usb-FTDI_TTL232R_FTGCHU4Q-if00-port0
+PORT = /dev/ttyUSB8
+#PORT = /dev/serial/by-id/usb-FTDI_TTL232R_FTGCHU4Q-if00-port0
+
+#  for uno R3	
 #DOWNLOAD_RATE = 115200
+# for pro mini
 DOWNLOAD_RATE = 57600
+# oddballs
 #DOWNLOAD_RATE = 19200
+
 AVRDUDE_PROGRAMMER = arduino
 MCU = atmega328p
 F_CPU = 16000000
